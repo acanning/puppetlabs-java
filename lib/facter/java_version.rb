@@ -23,7 +23,12 @@ Facter.add(:java_version) do
   setcode do
     unless [ 'openbsd', 'darwin' ].include? Facter.value(:operatingsystem).downcase
       if Facter::Util::Resolution.which('java')
-        Facter::Util::Resolution.exec('java -Xmx8m -version 2>&1').lines.first.split(/"/)[1].strip
+        case :operatingsystemmajrelease
+        when '4'
+          Facter::Util::Resolution.exec('java -version 2>&1').lines.first.split(/"/)[1].strip
+        else
+          Facter::Util::Resolution.exec('java -Xmx8m -version 2>&1').lines.first.split(/"/)[1].strip
+        end
       end
     end
   end
